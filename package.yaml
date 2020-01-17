@@ -1,33 +1,32 @@
-name: kata-lens-apprentice
+name: haskell-katas
 version: 0.1.0.0
-github: githubuser/kata-lens-apprentice
-license: BSD3
-author: Author name here
-maintainer: example@example.com
-copyright: 2020 Author name here
+github: kamirus/haskell-katas
+license: MIT
+author: kamirus
+copyright: 2020 kamirus
 extra-source-files:
   - README.md
 description: >-
   Please see the README on GitHub at
-  <https://github.com/githubuser/kata-lens-apprentice#readme>
+  <https://github.com/kamirus/haskell-katas#readme>
 dependencies:
   - base >= 4.7 && < 5
   - lens
   - hspec
 library:
   source-dirs: src
-executables:
-  kata-lens-apprentice-exe:
-    main: Main.hs
-    source-dirs: app
-    ghc-options:
-      - '-threaded'
-      - '-rtsopts'
-      - '-with-rtsopts=-N'
-    dependencies:
-      - kata-lens-apprentice
+# executables:
+#   haskell-katas-exe:
+#     main: Main.hs
+#     source-dirs: app
+#     ghc-options:
+#       - '-threaded'
+#       - '-rtsopts'
+#       - '-with-rtsopts=-N'
+#     dependencies:
+#       - haskell-katas
 tests:
-  kata-lens-apprentice-test:
+  haskell-katas-test:
     main: SimpleLensSpec.hs
     source-dirs: test
     ghc-options:
@@ -35,4 +34,4 @@ tests:
       - '-rtsopts'
       - '-with-rtsopts=-N'
     dependencies:
-      - kata-lens-apprentice
+      - haskell-katas

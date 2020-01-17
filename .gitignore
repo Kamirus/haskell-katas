@@ -1,4 +1,4 @@
 .stack-work/
-kata-lens-apprentice.cabal
+haskell-katas.cabal
 *~
 stack.yaml.lock

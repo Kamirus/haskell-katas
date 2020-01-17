@@ -1,6 +1,8 @@
 {-# language NoMonomorphismRestriction #-}
 -- the above courtesy of user "Wobben" on Discord. Needed for `lens` usage.
 
+-- module SimpleLensSpec where
+
 import           SimpleLens
 import           Test.Hspec
 import qualified Control.Lens.Tuple            as L
