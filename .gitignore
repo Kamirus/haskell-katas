@@ -1,0 +1,4 @@
+.stack-work/
+kata-lens-apprentice.cabal
+*~
+stack.yaml.lock
