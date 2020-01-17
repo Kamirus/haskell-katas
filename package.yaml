@@ -3,7 +3,7 @@ version: 0.1.0.0
 github: kamirus/haskell-katas
 license: MIT
 author: kamirus
-copyright: 2020 kamirus
+copyright: 2020 Kamil Listopad
 extra-source-files:
   - README.md
 description: >-
@@ -27,7 +27,7 @@ library:
 #       - haskell-katas
 tests:
   haskell-katas-test:
-    main: SimpleLensSpec.hs
+    main: Spec.hs
     source-dirs: test
     ghc-options:
       - '-threaded'

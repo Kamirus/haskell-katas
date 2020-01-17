@@ -1,7 +1,7 @@
 {-# language NoMonomorphismRestriction #-}
 -- the above courtesy of user "Wobben" on Discord. Needed for `lens` usage.
 
--- module SimpleLensSpec where
+module SimpleLensSpec where
 
 import           SimpleLens
 import           Test.Hspec
