@@ -7,7 +7,6 @@ maintainer: example@example.com
 copyright: 2020 Author name here
 extra-source-files:
   - README.md
-  - ChangeLog.md
 description: >-
   Please see the README on GitHub at
   <https://github.com/githubuser/kata-lens-apprentice#readme>
@@ -29,7 +28,7 @@ executables:
       - kata-lens-apprentice
 tests:
   kata-lens-apprentice-test:
-    main: Spec.hs
+    main: SimpleLensSpec.hs
     source-dirs: test
     ghc-options:
       - '-threaded'
