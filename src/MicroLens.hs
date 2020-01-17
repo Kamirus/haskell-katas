@@ -1,10 +1,9 @@
-{-# LANGUAGE RankNTypes #-}
-{-# LANGUAGE DeriveFunctor #-}
+{-# LANGUAGE RankNTypes, DeriveFunctor, TupleSections #-}
 
 module MicroLens where
 
 import           Prelude                 hiding ( sum )
-import           Data.Monoid
+import           Data.Semigroup
 import           Control.Applicative
 import qualified Data.Traversable              as T
 
@@ -26,6 +25,8 @@ class Profunctor p => Choice p where
 instance Profunctor (->) where
   dimap f g h = g . h . f
 
+-- left'  :: (a -> b) -> (Either a c) -> (Either b c)
+-- right' :: (a -> b) -> (Either c a) -> (Either c b)
 instance Choice (->) where
   left' f = either (Left . f) Right
   right' f = either Left (Right . f)
@@ -33,8 +34,7 @@ instance Choice (->) where
 class Contravariant f where
   contramap :: (a' -> a) -> (f a -> f a')
 
--- Control.Applicative.Const replicated here for your
--- convenience
+-- Control.Applicative.Const replicated here for your convenience
 newtype K b a = K { getK :: b } deriving Functor
 
 instance Monoid b => Applicative (K b) where
@@ -68,74 +68,64 @@ type Fold s a
 type Prism s t a b = forall p f . (Choice p, Applicative f) => Optic p f s t a b
 
 ---------------------------------------------------------
----------------------------------------------------------
--- Todo
+type Lens_ s t a b = forall f . Functor f => (a -> f b) -> (s -> f t)
 
 -- | A lens focusing on the first element in a pair
 _1 :: Lens (a, x) (b, x) a b
-_1 = error "todo"
+_1 f (a, x) = (, x) <$> f a
 
 -- | A lens focusing on the second element in a pair
 _2 :: Lens (x, a) (x, b) a b
-_2 = error "todo"
+_2 f (x, a) = (x, ) <$> f a
 
 -- | A function which takes a lens and looks through it.
--- The type given is specialized to provide a hint as to
--- how to write 'view'. The more intuitive type for its use
--- is
---
--- @
--- view :: Lens s t a b -> (s -> a)
--- @
-view :: Optic (->) (K a) s t a b -> (s -> a)
-view = error "todo"
+view :: Lens s t a b -> (s -> a)
+view l = getK . l K
 
 -- | A function which takes a lens and a transformation function
 -- and applies that transformer at the focal point of the lens.
--- The type given is specialized to provide a hint as to how to
--- write 'over'. The more intuitive type for its use is
---
--- @
--- over :: Lens s t a b -> (a -> b) -> (s -> t)
--- @
-over :: Optic (->) Id s t a b -> (a -> b) -> (s -> t)
-over = error "todo"
+over :: Lens s t a b -> (a -> b) -> (s -> t)
+over l f = getId . l (Id . f)
 
 -- | A function from a lens and a value which sets the value
--- at the focal point of the lens. The type given has been
--- specialized to provide a hint as to how to write 'set'. The
--- more intuitive type for its use is
---
--- @
--- set :: Lens s t a b -> b -> (s -> t)
--- @
-set :: Optic (->) Id s t a b -> b -> (s -> t)
-set = error "todo"
+-- at the focal point of the lens. 
+set :: Lens s t a b -> b -> (s -> t)
+set l b = getId . l (Id . const b)
 
--- | A traversal which focuses on each element in any 
--- Traversable container.
-elements :: T.Traversable f => Traversal (f a) (f b) a b
-elements = error "todo"
+---------------------------------------------------------
+
+type Traversal_ s t a b = forall f . Applicative f => (a -> f b) -> (s -> f t)
+
+-- | A traversal which focuses on each element in any Traversable container.
+elements :: T.Traversable t => Traversal (t a) (t b) a b
+elements = traverse
 
 -- | A function which takes a Traversal and pulls out each 
--- element it focuses on in order. The type has been 
--- specialized, as the others, but a more normal type might be
---
+-- element it focuses on in order.
+-- 
 -- @
--- toListOf :: Traversal s s a a -> (s -> [a])
+-- toListOf :: Optic (->) (K (Endo [a])) s s a a -> (s -> [a])
 -- @
-toListOf :: Optic (->) (K (Endo [a])) s s a a -> (s -> [a])
-toListOf = error "todo"
+toListOf :: Traversal s s a a -> (s -> [a])
+toListOf tl = getK . tl f
+ where
+  f :: a -> K [a] a
+  f = K . (: [])
 
 -- | A function which takes any kind of Optic which might
 -- be focused on zero subparts and returns Just the first
 -- subpart or else Nothing.
 --
 -- @
--- preview :: Traversal s s a a -> (s -> Maybe a)
+-- preview :: Optic (->) (K (First a)) s s a a -> (s -> Maybe a)
 -- @
-preview :: Optic (->) (K (First a)) s s a a -> (s -> Maybe a)
-preview = error "todo"
+preview :: Traversal s s a a -> (s -> Maybe a)
+preview tl = fmap getFirst . getOption . getK . tl f
+  where
+    f :: a -> K (Option (First a)) a
+    f = K . Option . Just . First
+
+---------------------------------------------------------
 
 -- | A helper function which witnesses the fact that any
 -- container which is both a Functor and a Contravariant

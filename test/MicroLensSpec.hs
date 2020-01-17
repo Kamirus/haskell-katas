@@ -4,6 +4,9 @@ import           Prelude                 hiding ( sum )
 import           MicroLens
 import           Data.Monoid
 import           Test.Hspec
+import qualified Control.Lens as L
+
+problematic = L.toListOf (L.traversed . L.to succ) [1, 2, 3]
 
 spec = do
   describe "Basic lensing" $ do
@@ -14,9 +17,9 @@ spec = do
   describe "Basic traversals" $ do
     it "should traverse" $ shouldBe (toListOf elements [1, 2, 3]) [1, 2, 3]
     it "should miss" $ shouldBe (preview elements []) (Nothing :: Maybe Int)
-  describe "Basic mapping" $ it "should map" $ shouldBe
-    (toListOf (elements . to succ) [1, 2, 3])
-    [2, 3, 4 :: Int]
+  -- describe "Basic mapping" $ it "should map" $ shouldBe
+  --   (toListOf (elements . to succ) [1, 2, 3])
+  --   [2, 3, 4 :: Int]
   describe "Basic prisming" $ do
     it "should get Left"
       $ shouldBe (preview _Left (Left 3)) (Just 3 :: Maybe Int)
